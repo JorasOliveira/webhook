@@ -1,0 +1,30 @@
+# OCaml build files
+_build/
+*.install
+*.exe
+*.o
+*.a
+*.cmx
+*.cmxa
+*.cmo
+*.cma
+*.cmi
+*.cmxs
+*.cmt
+*.cmti
+*.annot
+
+# Dune build files
+.merlin
+*.install
+_opam/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+*~
+
+# System files
+.DS_Store
+Thumbs.db
