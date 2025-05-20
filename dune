@@ -1,4 +1,0 @@
-(executable
- (name webhook)
- (libraries dream yojson)
- (preprocess (pps ppx_deriving_yojson)))
