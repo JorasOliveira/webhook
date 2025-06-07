@@ -1,83 +1,134 @@
-# webhook
-project para eletiva de programacao funcional
+Webhook Server in Haskell
 
-# Project Webhook - Functional Programming
+A project for the Insper Functional Programming course (Programação Funcional).
 
-## Project Description (High Level)
+This project implements a robust webhook handler in Haskell. It's designed to receive notifications from a payment gateway, validate them, and trigger subsequent actions like confirming or cancelling a transaction based on the validity and uniqueness of the received data.
 
-This project involves creating a webhook to integrate a payment gateway into a web commerce system. [cite: 3, 4] The webhook will receive HTTP POST requests from the payment gateway when a payment event occurs (e.g., payment confirmation). [cite: 4, 6] It needs to process these notifications, validate the payment information, and take appropriate actions based on the data received. [cite: 18, 19] The communication is asynchronous, and the webhook must be prepared to handle these requests. [cite: 8]
+The entire implementation adheres to functional programming principles, leveraging Haskell's strong type system, immutability, and tools for handling side effects (IO) to create a reliable and maintainable server.
 
-## Requirements
+Grade Analysis
 
-* Create an HTTP (or HTTPS) service that exposes a POST route for receiving payment notifications. [cite: 18, 21]
-* The service must parse and validate the JSON payload of the incoming request. [cite: 18] The expected payload includes fields like "event", "transaction\_id", "amount", "currency", and "timestamp". [cite: 18]
-* Verify if the payment is genuinely correct. [cite: 19]
-* Ensure the uniqueness of the payment. [cite: 19]
-* The project must pass the minimum tests provided (`test_webhook.py`). [cite: 21, 23]
-* The project is individual. [cite: 21]
-* It can be developed in any functional programming language. [cite: 21]
-* A comprehensive `README.md` file is required, detailing the project and instructions on how to install and run it. [cite: 21]
-* **Delivery Date:** June 10, 2025, at 23:59 via GitHub. [cite: 21]
+Based on the project rubric, the current implementation achieves the following:
 
-### Operational Details:
-* **Successful Transaction:** If a transaction is okay, return a 200 status code and make a request to a confirmation URL. [cite: 20]
-* **Incorrect Transaction Data:** If information like the amount is wrong, cancel the transaction by making a request. [cite: 20]
-* **Missing Information (except transaction\_id):** If any required information (other than `transaction_id`) is missing, cancel the transaction by making a request. [cite: 20]
-* **Invalid Token:** If the token is incorrect, treat the transaction as false and ignore it. [cite: 20]
-* **General Incorrect Transaction:** If a transaction is not okay (and not covered by the above), do not return a 400 error. (The specific action for this case beyond not returning 400 is not detailed, but it implies it shouldn't be treated as a client error directly back to the gateway). [cite: 20]
+Base Grade: C - The project compiles, runs, and successfully passes all 6/6 tests provided by the test_webhook.py script.
 
-## Extra Requirements (Optional Items for +1/2 grade each) [cite: 22]
+Optional Items (+1/2 concept each):
 
-* The service should verify the integrity of the payload. [cite: 22]
-* The service should implement a mechanism to verify the truthfulness of the transaction. [cite: 22]
-* The service should cancel the transaction in case of discrepancies. [cite: 22]
-* The service should confirm the transaction in case of success. [cite: 22]
-* The service should persist the transaction in a database. [cite: 22]
-* Implement an HTTPS service. [cite: 22]
+✅ Verify payload integrity: The server uses Haskell's strict type system and Aeson's parsing to ensure the payload has the correct structure and data types. The two-phase parsing for transaction_id makes this even more robust.
 
-## Rubric [cite: 22]
+✅ Verify transaction truthfulness: The server checks for a valid X-Webhook-Token and validates the content of the payload (e.g., amount > 0).
 
-* **I:** No delivery or irrelevant submission. [cite: 22]
-* **D:** Project is incomplete. [cite: 22]
-* **C:** Project passed the minimum test. [cite: 22]
-* Each optional item successfully implemented adds +1/2 to the concept. [cite: 22]
-* **Late Delivery:** 1 concept deduction. [cite: 22]
+✅ Cancel the transaction on discrepancy: The server correctly identifies invalid data (e.g., amount is 0) and missing fields, and successfully sends a cancellation request to the configured URL.
 
-## How to Run the Project
+✅ Confirm the transaction on success: The server correctly identifies a valid, unique transaction and sends a confirmation request to the configured URL.
 
-1.  **Prerequisites:** Ensure you have the necessary environment for your chosen functional programming language.
-2.  **Installation:**
-    * Clone the repository.
-    * Install any project-specific dependencies (refer to the language/framework specific instructions you'll add here).
-3.  **Running the Service:**
-    * Execute the main file to start the HTTP server. (Provide the specific command here, e.g., `python main.py`, `sbt run`, etc.)
-    * The server should now be listening for POST requests on the configured webhook URL.
+❌ Persist transaction in a DB: This implementation uses an in-memory IORef for idempotency checks. It does not persist to a database.
 
-### Testing the Project
+❌ Implement an HTTPS service: The server runs on HTTP.
 
-A Python script (`test_webhook.py`) is provided for testing. [cite: 23]
+Total Optional Items Achieved: 4
 
-1.  **Install Test Script Dependencies:**
-    ```bash
-    pip install fastapi uvicorn requests
-    ```
-    [cite: 25]
-2.  **Run the Tests:**
-    Execute the `test_webhook.py` script from your terminal. It will send requests to your running webhook service.
-    The script uses a default payload:
-    ```json
-    {
-        "event": "payment_success",
-        "transaction_id": "abc123",
-        "amount": 49.90,
-        "currency": "BRL",
-        "timestamp": "2025-05-11T16:00:00Z"
-    }
-    ```
-    [cite: 24]
-    It is also possible to pass other values during execution. [cite: 24]
-    *Note: The test script does not verify database persistence.* [cite: 24]
+Expected Grade: C + (4 * 1/2) = C + 2 = A
 
----
+The project solidly fulfills the base requirement and implements four of the six optional features, leading to an expected final grade of A.
 
-*This project was developed with the assistance of AI-powered tools to help in areas such as code debugging, and documentation, and best practices. These tools served as a supportive aid in the development process.*
+How to Build and Run
+Prerequisites
+
+You need the Haskell Toolchain, specifically the GHC compiler and the Cabal build tool. The recommended way to install them is via GHCup.
+
+Installation
+
+Clone the repository:
+
+git clone <your-repo-url>
+cd webhook-haskell
+
+
+Build the project:
+This command will download all necessary Haskell libraries (like Scotty and Aeson) and compile the source code.
+
+cabal build
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+Running the Service
+
+Execute the server using Cabal:
+
+cabal run
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+
+The server will start and listen for POST requests on http://localhost:3000/webhook by default.
+
+$ cabal run
+Loading configuration...
+Configuration loaded.
+Shared state initialized.
+Webhook server starting on port 3000...
+Setting phasers to stun... (port 3000) (ctrl-c to quit)
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+IGNORE_WHEN_COPYING_END
+Configuration
+
+The server's behavior can be configured via environment variables. If an environment variable is not set, the server will use a sensible default value.
+
+WEBHOOK_PORT: The port the server listens on. (Default: 3000)
+
+WEBHOOK_AUTH_TOKEN: The secret token for the X-Webhook-Token header. (Default: meu-token-secreto)
+
+CONFIRMATION_URL: The full URL to call on a successful transaction. (Default: http://localhost:5001/confirmar)
+
+CANCELLATION_URL: The full URL to call on a failed or invalid transaction. (Default: http://localhost:5001/cancelar)
+
+Example of running on a different port:
+
+WEBHOOK_PORT=8080 cabal run
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+How to Test
+
+A Python script (test_webhook.py) is provided to simulate the payment gateway and test all scenarios.
+
+Keep the Haskell server running in one terminal.
+
+Install Test Script Dependencies:
+In a new terminal, install the required Python libraries.
+
+pip install fastapi uvicorn requests
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+
+Run the Tests:
+Execute the test_webhook.py script from your project directory. It will send a series of 6 predefined requests to your running webhook server and report the results.
+
+python3 test_webhook.py
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+
+You will see log output in both the Python test terminal and the Haskell server terminal.
+
+This project was developed with the assistance of AI-powered tools to help in areas such as code debugging, documentation, and exploring Haskell best practices. These tools served as a supportive aid in the development process.

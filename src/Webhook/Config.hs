@@ -1,13 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Webhook.Config (
-    AppConfig (..),
+    AppConfig(..),
     loadAppConfig
 ) where
 
 import Data.Text (Text)
 import qualified Data.Text as T
 import System.Environment (lookupEnv)
+import Text.Read (readMaybe) -- Added for safe parsing
 
 -- | Holds application configuration.
 data AppConfig = AppConfig {
@@ -21,22 +22,20 @@ data AppConfig = AppConfig {
 loadAppConfig :: IO AppConfig
 loadAppConfig = do
     -- Auth Token
-    envAuthToken <- lookupEnv "WEBHOOK_AUTH_TOKEN"
-    let authToken = maybe "SECRET_TOKEN_FROM_GATEWAY" T.pack envAuthToken
+    mAuthToken <- lookupEnv "WEBHOOK_AUTH_TOKEN"
+    let authToken = maybe "meu-token-secreto" T.pack mAuthToken
 
     -- Confirmation URL
-    envConfirmationUrl <- lookupEnv "CONFIRMATION_URL"
-    let confirmationUrl = maybe "http://localhost:3001/payment-confirmed" id envConfirmationUrl
+    mConfirmationUrl <- lookupEnv "CONFIRMATION_URL"
+    let confirmationUrl = maybe "http://localhost:5001/confirmar" id mConfirmationUrl
 
     -- Cancellation URL
-    envCancellationUrl <- lookupEnv "CANCELLATION_URL"
-    let cancellationUrl = maybe "http://localhost:3002/payment-cancelled" id envCancellationUrl
+    mCancellationUrl <- lookupEnv "CANCELLATION_URL"
+    let cancellationUrl = maybe "http://localhost:5001/cancelar" id mCancellationUrl
 
-    -- Server Port
-    envPortStr <- lookupEnv "WEBHOOK_PORT"
-    let port = case envPortStr of
-                 Just portStr -> maybe 3000 read portStr
-                 Nothing      -> 3000
+    -- Server Port (FIXED)
+    mPortStr <- lookupEnv "WEBHOOK_PORT"
+    let port = maybe 3000 id (mPortStr >>= readMaybe)
     
     return AppConfig {
         cfgAuthToken = authToken,

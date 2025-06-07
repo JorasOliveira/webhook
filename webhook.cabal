@@ -48,3 +48,10 @@ executable webhook-server
     hs-source-dirs:   src
     build-depends:    webhook-haskell 
     ghc-options:      -threaded -rtsopts -with-rtsopts=-N
+
+    other-modules:    Webhook.Config
+                    , Webhook.External
+                    , Webhook.Handler
+                    , Webhook.State
+                    , Webhook.Types
+                    , Webhook.Validation

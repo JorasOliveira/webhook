@@ -6,10 +6,9 @@ module Webhook.External (
 
 import Control.Exception (SomeException, try)
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Data.Aeson (ToJSON, encode, Value)
+import Data.Aeson (ToJSON, encode)
 import Network.HTTP.Simple (httpNoBody, parseRequest, setRequestBodyLBS,
                             setRequestHeader, setRequestMethod, getResponseStatusCode)
-import qualified Data.ByteString.Lazy as LBS
 
 -- | Sends a POST notification with a JSON payload to the specified URL.
 -- Returns the HTTP status code of the response or an exception.
